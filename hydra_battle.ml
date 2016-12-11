@@ -55,16 +55,40 @@ let example_deep_two_copies =
 
 (* Écrire une fonction donnant la taille d'une hydre (nombre total de noeuds) *)
 let rec size : hydra -> int = fun h ->
-  failwith "A écrire"
+  match h with
+  Node []-> 1
+ |Node [h]-> 1 + size h
+ |Node [h1;h2]-> 1 + size h1 + size h2
+ |Node [h1;h2;h3]-> 1 + size h1 + size h2 + size h3(*until how many filles max ?*)
+                                    
+let _=size baby_hydra
+let _=size very_small_hydra
+let _=size my_hydra
 
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
 let rec height : hydra -> int = fun h ->
-  failwith "A écrire"
+  match h with
+  Node []-> 0
+ |Node [h]-> 1 + height h
+ |Node [h1;h2]-> 1 + max (height h1)  (height h2)
+ |Node [h1;h2;h3]-> 1 + max (max (height h1) (height h2)) (max (height h3) (height h2)) 
 
+let _=height baby_hydra
+let _=height very_small_hydra
+let _=height my_hydra
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
-let histogram : hydra -> int list = fun h ->
-  failwith "A écrire"
+let rec histogram : hydra -> int list = fun h ->
+  match h with
+    Node []->1::[]
+   |Node [h]-> 1::histogram h
+   |Node [h1;h2]->2::histogram h1::histogram h2
+   |Node [h1;h2;h3]->3::histogram h1::histogram h2::histogram h3
+
+let _=histogram baby_hydra
+let _=histogram very_small_hydra
+let _=histogram my_hydra
+                  
 
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
 let histogram_heads : hydra -> int list = fun h ->
