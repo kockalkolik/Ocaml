@@ -119,16 +119,41 @@ let _=histogram_heads example_deep;;
    Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec
    les contraintes décrites dans le sujet.
 *)
-let hydra_edges : hydra -> (int * int) list = fun h ->
-  
+let couples_int : hydra -> (hydra*int) list = fun h ->
+  let rec aux l h h' k =
+    match les_filles h' with
+    |[]->
+      if petites_filles h = []
+      then l
+      else aux l (Node(petites_filles h)) (Node(petites_filles h)) k
+    |x::t ->
+      if is_head x
+      then aux l h (Node t) (k+1)
+      else aux (l@[(x,k)]) h (Node t) (k+1)
+  in aux [] h h 1
+let _=couples_int example_hydra
 
+let hydra_edges : hydra -> (int * int) list = fun h ->
+  let rec aux h h' l next k acc =
+    match les_filles h with
+    | [] ->
+      if petites_filles h' = []
+      then acc
+      else (
+        match l with
+        | ((x,y)::l')-> aux x x l' next y acc
+        | [] -> acc
+      )
+    | (x::y) -> aux (Node y) h' l (next + 1) k ((k,next)::acc)
+  in List.rev(aux h h (couples_int h) 1 0 [])
+let _=hydra_edges example_hydra;;
 (*
    Affiche une hydre h.
    Prérequis : la fonction hydra_edges doit avoir été écrite.
 *)
 let show_hydra h =
   (* Translates the list of edges in dot format, and outputs it to filename *)
-  let hydra_to_dot h filename =    
+  let hydra_to_dot h filename =
     let rec edges_to_dot edges channel =
       match edges with
         [] -> ()
