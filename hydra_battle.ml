@@ -26,6 +26,8 @@ let trisame h = tri h h h
 (* Liste des filles d'un nœud *)
 let les_filles (Node hs) = hs
 
+
+
 (* Exemples d'hydres *)
 
 let baby_hydra = single head
@@ -53,53 +55,72 @@ let example_deep_two_copies =
 
 (* Les hydres pouvant être assez grosses, il est utile de fournir quelques mesures  *)
 
+let _=les_filles very_small_hydra
+
+(*liste descendants en une liste*)
+
+let petites_filles h=
+  let rec aux (l : hydra list) acc =
+    match l with
+    | [] -> acc
+    | h::t -> aux t (les_filles h)@acc
+  in aux (les_filles h) []
+
+let _=petites_filles very_small_hydra
+let _=petites_filles example_hydra
+
 (* Écrire une fonction donnant la taille d'une hydre (nombre total de noeuds) *)
 let rec size : hydra -> int = fun h ->
   match h with
   Node []-> 1
- |Node [h]-> 1 + size h
- |Node [h1;h2]-> 1 + size h1 + size h2
- |Node [h1;h2;h3]-> 1 + size h1 + size h2 + size h3(*until how many filles max ?*)
-                                    
+ |Node (a::h')-> size a + size (Node h')
+
 let _=size baby_hydra
 let _=size very_small_hydra
-let _=size my_hydra
+let _=size example_hydra
 
 (* Écrire une fonction donnant la hauteur d'une hydre (longueur maximale d'un  chemin partant du pied) *)
-let rec height : hydra -> int = fun h ->
-  match h with
-  Node []-> 0
- |Node [h]-> 1 + height h
- |Node [h1;h2]-> 1 + max (height h1)  (height h2)
- |Node [h1;h2;h3]-> 1 + max (max (height h1) (height h2)) (max (height h3) (height h2)) 
+let height : hydra -> int = fun h ->
+  let rec aux h acc=
+    match les_filles h with
+    | [] -> acc
+    | _ -> aux (Node(petites_filles h)) (acc+1)
+  in aux h 0
 
 let _=height baby_hydra
 let _=height very_small_hydra
-let _=height my_hydra
+let _=height example_hydra
+
 (* Écrire une fonction qui calcule l'histogramme d'une hydre, nombre de noeuds à chaque niveau *)
 
 let rec histogram : hydra -> int list = fun h ->
-  match h with
-    Node []->1::[]
-   |Node [h]-> 1::histogram h
-   |Node [h1;h2]->2::histogram h1::histogram h2
-   |Node [h1;h2;h3]->3::histogram h1::histogram h2::histogram h3
+  let rec aux h acc =
+    match h with
+    | Node [] -> acc
+    | _ -> aux (Node (petites_filles h)) (List.length(les_filles h)::acc)
+  in List.rev( aux h [1])
 
 let _=histogram baby_hydra
 let _=histogram very_small_hydra
-let _=histogram my_hydra
-                  
+let _=histogram example_hydra
 
 (* Écrire une fonction qui compte le nombre de têtes à chaque niveau. *)
 let histogram_heads : hydra -> int list = fun h ->
-  failwith "A écrire"
+  let rec aux h acc =
+    match h with
+    | Node [] -> acc
+    | _ -> aux (Node (petites_filles h)) (List.length(List.filter is_head(les_filles h))::acc)
+  in List.rev( aux h [0])
 
+let _=histogram_heads baby_hydra
+let _=histogram_heads very_small_hydra
+let _=histogram_heads example_deep;;
 (*
-   Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec 
+   Écrire une fonction qui retourne une liste triée d'arêtes de l'hydre, avec
    les contraintes décrites dans le sujet.
 *)
 let hydra_edges : hydra -> (int * int) list = fun h ->
-  failwith "A écrire"
+  
 
 (*
    Affiche une hydre h.
