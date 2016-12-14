@@ -146,10 +146,10 @@ let hydra_edges h =
   let rec aux l res next =
     match l with
     | [] -> res
-    | t::q -> aux q (hydra_convers(t next)::res) next
-  in List.sort(aux (hydra_num h) [] 1) ;;
+    | (a,b)::q -> aux q (List.append (hydra_convers (a,b) next) res) (next + b)
+  in List.rev(aux (hydra_num h) [] 1) ;;
 
-
+let _ = hydra_edges example_hydra ;;
   
 
 (*
