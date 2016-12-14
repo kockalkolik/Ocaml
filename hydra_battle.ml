@@ -274,7 +274,10 @@ type hercules_strat =  hydra -> path
 *)
 
 let rec sub_hydra : path -> hydra -> hydra = fun path h ->
-  failwith "A écrire"
+  match path with
+  |[]->h
+  |t::q->sub_hydra q (List.nth (les_filles h) t))
+let _=sub_hydra [1;0;0;2] example_hydra;;
 
 (* Écrire la fonction suivante qui teste si une stratégie choisit bien une tête  *)
 let check_hercules_strategy : hercules_strat -> hydra -> bool = fun strat  h  ->
@@ -282,7 +285,12 @@ let check_hercules_strategy : hercules_strat -> hydra -> bool = fun strat  h  ->
 
 (* Écrire la stratégie choisissant la tête la plus à gauche *)
 let leftmost_head_strat : hercules_strat = fun  h  ->
-  failwith "A écrire"
+  let rec aux h acc =
+    match h with
+    | Node [] -> acc
+    | _ -> aux (List.nth(les_filles h) 0) [0]@acc
+  in List.rev(aux h [])
+let _=leftmost_head_strat small_hydra;;
 
 (* Écrire la stratégie choisissant une tête de hauteur maximale *)
 let highest_head_strat : hercules_strat = fun h ->
