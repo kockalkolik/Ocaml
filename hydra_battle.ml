@@ -136,18 +136,21 @@ let _ = hydra_num example_hydra ;;
 
 let  hydra_convers (a,b) next =
   let rec aux next l acc = if (acc = b) then l
-                             else aux (next + 1) (List.append l [(a+0,next)]) (acc + 1 )
+                             else aux (next + 1) ((a+0,next)::l) (acc + 1 )
   in aux next [] 0 ;;
 
 let t = (6,3) ;;
 let _ = hydra_convers t 7 ;;
-  
+
 let hydra_edges h =
   let rec aux l res next =
     match l with
     | [] -> res
     | t::q -> aux q (hydra_convers(t next)::res) next
-  in aux (hydra_num h) [] 1 ;;
+  in List.sort(aux (hydra_num h) [] 1) ;;
+
+
+  
 
 (*
    Affiche une hydre h.
